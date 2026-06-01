@@ -1,15 +1,11 @@
 extends layout
 
 block content
+  main
+    section#intro-text
+      include includes/sidebar
+      p Pan-seared chicken, Grill shrimp, mac & cheese—need we say more?
+      button.submit-buttton(type='button') View Recipes
 
-    if registrations.length
-        table.listing-table.table-dark.table-striped
-            tr
-                th Name
-                th Email
-            each registration in registrations
-                tr
-                    td= registration.name
-                    td= registration.email
-    else
-        p No registrations yet :(
+    section#intro-image
+      img(src='/images/louisiana-barbecued-shrimp.webp', alt='Louisiana Barbecued Shrimp')

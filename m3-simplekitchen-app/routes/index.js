@@ -11,47 +11,59 @@ const basic = auth.basic({
 });
 
 router.get('/', (req, res) => {
-  //res.send('It works!');
-  res.render('form', { title: 'Registration form' });
+  res.render('index', { title: 'Simple Kitchen' });
 });
 
-router.get('/registrations', basic.check((req, res) => {
+router.get('/register', (req, res) => {
+  res.render('register', { title: 'Register' });
+});
+
+router.post('/register',
+  [
+    check('name')
+      .isLength({ min: 1 })
+      .withMessage('Please enter a name'),
+    check('email')
+      .isLength({ min: 1 })
+      .withMessage('Please enter an email'),
+  ],
+  (req, res) => {
+    const errors = validationResult(req);
+
+    if (errors.isEmpty()) {
+      const registration = new Registration(req.body);
+      registration
+        .save()
+        .then(() => res.redirect('/thankyou'))
+        .catch((err) => {
+          console.log(err);
+          res.send('Sorry! Something went wrong.');
+        });
+    } else {
+      res.render('register', {
+        title: 'Register',
+        errors: errors.array(),
+        data: req.body,
+      });
+    }
+  });
+
+router.get('/thankyou', (req, res) => {
+  res.render('thankyou', { title: 'Thank you' });
+});
+
+router.get('/registrants', basic.check((req, res) => {
   Registration.find()
     .then((registrations) => {
-      res.render('index', { title: 'Listing registrations', registrations });
+      res.render('registrants', {
+        title: 'Registrants',
+        bodyClass: 'registrants-page',
+        registrations,
+      });
     })
-    .catch(() => { 
-      res.send('Sorry! Something went wrong.'); 
+    .catch(() => {
+      res.send('Sorry! Something went wrong.');
     });
 }));
-
-router.post('/', 
-    [
-        check('name')
-        .isLength({ min: 1 })
-        .withMessage('Please enter a name'),
-        check('email')
-        .isLength({ min: 1 })
-        .withMessage('Please enter an email'),
-    ],
-    (req, res) => {
-        //console.log(req.body);
-        const errors = validationResult(req);
-        if (errors.isEmpty()) {
-          const registration = new Registration(req.body);
-          registration.save()
-            .then(() => {res.send('Thank you for your registration!');})
-            .catch((err) => {
-              console.log(err);
-              res.send('Sorry! Something went wrong.');
-            });
-          } else {
-            res.render('form', { 
-                title: 'Registration form',
-                errors: errors.array(),
-                data: req.body,
-             });
-          }
-    });
 
 module.exports = router;

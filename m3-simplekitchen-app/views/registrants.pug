@@ -1,0 +1,17 @@
+extends layout
+
+block content
+  main.registrants-main
+    if registrations.length
+      table.listing-table
+        thead
+          tr
+            th Name
+            th Email
+        tbody
+          each registration in registrations
+            tr
+              td= registration.name
+              td= registration.email
+    else
+      p.registrants-empty No registrations yet :(

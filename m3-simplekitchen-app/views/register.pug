@@ -1,0 +1,33 @@
+extends layout
+
+block content
+  - const formData = data || {}
+
+  main
+    section#intro-text
+      include includes/sidebar
+
+    section#page-panel.register-panel
+      if errors
+        ul.my-errors
+          each error in errors
+            li= error.msg
+
+      h2 Register to subscribe
+
+      form.form-registration(action='/register', method='POST')
+        label(for='name') Name:
+        input#name(
+          type='text',
+          name='name',
+          value=formData.name
+        )
+
+        label(for='email') Email:
+        input#email(
+          type='email',
+          name='email',
+          value=formData.email
+        )
+
+        button.submit-buttton(type='submit') Register
